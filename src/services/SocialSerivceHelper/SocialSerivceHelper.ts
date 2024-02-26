@@ -110,4 +110,18 @@ export default class SocialSerivceHelper {
     })
     return await this.parseResult(resp.data)
   }
+
+  async checkTweetLike(userKey: string, tweetId: string): Promise<number> {
+    const resp = await this.axios.get(
+      `/api/v1/twitter/check_tweet_like/${userKey}/${tweetId}`
+    )
+    return await this.parseResult(resp.data)
+  }
+
+  async checkTweetRetweet(userKey: string, tweetId: string): Promise<number> {
+    const resp = await this.axios.get(
+      `/api/v1/twitter/check_tweet_retweet/${userKey}/${tweetId}`
+    )
+    return await this.parseResult(resp.data)
+  }
 }

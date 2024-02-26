@@ -1,4 +1,7 @@
 import { User } from '../db/models'
+import TwitterTaskRecord, {
+  TwitterTaskRecordData,
+} from '../db/models/TwitterTaskRecord'
 import socialSerivceHelper from './SocialSerivceHelper'
 import {
   TwitterUserInfo,
@@ -104,6 +107,45 @@ export async function userTwitterBindCallback(
   return data
 }
 
+export async function userTwitterTaskInfo(
+  user: User
+): Promise<TwitterTaskRecordData> {
+  const record = await TwitterTaskRecord.findOrCreateTaskRecord(user)
+  return record.getData()
+}
+
+export async function userTwitterTaskCheckLike(
+  user: User
+): Promise<TwitterTaskRecordData> {
+  const record = await TwitterTaskRecord.findOrCreateTaskRecord(user)
+  if (record.likeRecordId > 0) {
+    return record.getData()
+  }
+  const data = await socialSerivceHelper.checkTweetLike(
+    (user.id as number).toString(),
+    record.tweetId
+  )
+  record.setDataValue('likeRecordId', data)
+  await record.save()
+  return record.getData()
+}
+
+export async function userTwitterTaskCheckRetweet(
+  user: User
+): Promise<TwitterTaskRecordData> {
+  const record = await TwitterTaskRecord.findOrCreateTaskRecord(user)
+  if (record.retweetRecordId > 0) {
+    return record.getData()
+  }
+  const data = await socialSerivceHelper.checkTweetRetweet(
+    (user.id as number).toString(),
+    record.tweetId
+  )
+  record.setDataValue('retweetRecordId', data)
+  await record.save()
+  return record.getData()
+}
+
 const userServices = {
   fetchWalletSignRequest,
   login,
@@ -111,6 +153,9 @@ const userServices = {
   fetchAllData,
   fetchUserTwitterAuthUrl,
   userTwitterBindCallback,
+  userTwitterTaskInfo,
+  userTwitterTaskCheckLike,
+  userTwitterTaskCheckRetweet,
 }
 
 export default userServices

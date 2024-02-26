@@ -14,6 +14,7 @@ import {
 } from '../../services/SocialSerivceHelper/types'
 import { generateJWTToken } from '../../services/utils'
 import jwtMiddleware, { JWTRequest } from '../../middleware/jwt.middleware'
+import { TwitterTaskRecordData } from '../../db/models/TwitterTaskRecord'
 
 interface TwitterBindCallbackQuery {
   state: string
@@ -59,7 +60,25 @@ export default class UserController implements Controller {
     this.router.get(
       '/twitter/bind_callback',
       jsonResponseMiddleware,
-      this.twitterBindCallback as RequestHandler
+      this.twitterBindCallback as unknown as RequestHandler
+    )
+    this.router.get(
+      '/twitter/task/info',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.twitterTaskInfo as unknown as RequestHandler
+    )
+    this.router.get(
+      '/twitter/task/check_like',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.twitterTaskCheckLike as unknown as RequestHandler
+    )
+    this.router.get(
+      '/twitter/task/check_retweet',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.twitterTaskCheckRetweet as unknown as RequestHandler
     )
     // this.router.get(
     //   '/:userKey/wallets',
@@ -128,7 +147,7 @@ export default class UserController implements Controller {
   }
 
   private myInfo(
-    request: Request<{ address: string }>,
+    request: Request,
     response: JsonResponse<UserData>,
     next: NextFunction
   ): void {
@@ -172,6 +191,54 @@ export default class UserController implements Controller {
       })
       .catch((error) => {
         response.status(500).jsonError(error.message, 1005)
+      })
+  }
+
+  private twitterTaskInfo(
+    request: Request,
+    response: JsonResponse<TwitterTaskRecordData>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    userServices
+      .userTwitterTaskInfo(authUser)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1003)
+      })
+  }
+
+  private twitterTaskCheckLike(
+    request: Request,
+    response: JsonResponse<TwitterTaskRecordData>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    userServices
+      .userTwitterTaskCheckLike(authUser)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1003)
+      })
+  }
+
+  private twitterTaskCheckRetweet(
+    request: Request,
+    response: JsonResponse<TwitterTaskRecordData>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    userServices
+      .userTwitterTaskCheckRetweet(authUser)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1003)
       })
   }
 

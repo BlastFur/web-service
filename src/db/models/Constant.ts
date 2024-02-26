@@ -9,7 +9,10 @@ import {
 } from 'sequelize-typescript'
 import { ConstantData, ConstantKind, ConstantType } from './types'
 
-export type TobotoConstantName = 'defaultVipExpiredAt' | 'fakeXVerify'
+export type TobotoConstantName =
+  | 'defaultVipExpiredAt'
+  | 'fakeXVerify'
+  | 'taskTweetId'
 
 export type ConstantDataValue = string | number | boolean
 
@@ -18,6 +21,7 @@ type NameMap<T> =
     T extends 'defaultVipExpiredAt' ? string :
     // string like '[1,2,3]' for endpoint table id
     T extends 'fakeXVerify' ? boolean :
+    T extends 'taskTweetId' ? string :
     never;
 /* eslint-enable */
 

@@ -1,4 +1,4 @@
-# BlastFur Social Service
+# BlastFur Web Service
 
 ## Develop
 
@@ -14,7 +14,8 @@ DB_HOST=127.0.0.1
 DB_NAME=blastfur-social-service
 DB_USER=root
 DB_PASS=
-PORT=8089
+PORT=80898
+SOCIAL_SERVICE=http://localhost:8089
 ```
 
 ### Service

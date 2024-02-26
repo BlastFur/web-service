@@ -15,6 +15,11 @@ import {
 import { generateJWTToken } from '../../services/utils'
 import jwtMiddleware, { JWTRequest } from '../../middleware/jwt.middleware'
 
+interface TwitterBindCallbackQuery {
+  state: string
+  code: string
+}
+
 export default class UserController implements Controller {
   public path = '/api/v1/user'
   public router = Router()
@@ -44,6 +49,17 @@ export default class UserController implements Controller {
       jwtMiddleware(),
       jsonResponseMiddleware,
       this.myInfo as RequestHandler
+    )
+    this.router.get(
+      '/twitter/auth_url',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.twitterAuthUrl as RequestHandler
+    )
+    this.router.get(
+      '/twitter/bind_callback',
+      jsonResponseMiddleware,
+      this.twitterBindCallback as RequestHandler
     )
     // this.router.get(
     //   '/:userKey/wallets',
@@ -124,6 +140,38 @@ export default class UserController implements Controller {
       })
       .catch((error) => {
         response.status(500).jsonError(error.message, 1003)
+      })
+  }
+
+  private twitterAuthUrl(
+    request: Request,
+    response: JsonResponse<string>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    userServices
+      .fetchUserTwitterAuthUrl(authUser)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1004)
+      })
+  }
+
+  private twitterBindCallback(
+    request: Request<any, any, any, TwitterBindCallbackQuery>,
+    response: JsonResponse<UserData>,
+    next: NextFunction
+  ): void {
+    const { state, code } = request.query
+    userServices
+      .userTwitterBindCallback(state, code)
+      .then(() => {
+        response.render('autoclose')
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1005)
       })
   }
 

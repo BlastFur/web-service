@@ -89,11 +89,28 @@ export async function fetchAllData(userKey: string): Promise<UserData> {
   }
 }
 
+export async function fetchUserTwitterAuthUrl(user: User): Promise<string> {
+  const data = await socialSerivceHelper.fetchUserTwitterAuthUrl(
+    (user.id as number).toString()
+  )
+  return data
+}
+
+export async function userTwitterBindCallback(
+  state: string,
+  code: string
+): Promise<TwitterUserInfo> {
+  const data = await socialSerivceHelper.twitterBindCallback(state, code)
+  return data
+}
+
 const userServices = {
   fetchWalletSignRequest,
   login,
   signup,
   fetchAllData,
+  fetchUserTwitterAuthUrl,
+  userTwitterBindCallback,
 }
 
 export default userServices

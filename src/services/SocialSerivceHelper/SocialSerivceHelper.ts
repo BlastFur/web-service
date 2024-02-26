@@ -2,9 +2,11 @@ import axios, { AxiosInstance } from 'axios'
 import {
   SOCIAL_SERVICE,
   SOCIAL_SERVICE_APIKEY,
+  SOCIAL_SERVICE_TWITTER_CALLBACK,
   SOCIAL_SERVICE_WALLET_CHAIN_ID,
 } from '../../constants'
 import {
+  TwitterUserInfo,
   UpsertUserWalletPayload,
   UserAllData,
   UserWalletData,
@@ -87,6 +89,25 @@ export default class SocialSerivceHelper {
   // users
   async fetchAllData(userKey: string): Promise<UserAllData> {
     const resp = await this.axios.get(`/api/v1/user/${userKey}`)
+    return await this.parseResult(resp.data)
+  }
+
+  // twitters
+  async fetchUserTwitterAuthUrl(userKey: string): Promise<string> {
+    const resp = await this.axios.get(
+      `/api/v1/twitter/user/${userKey}/authurl?callback=${SOCIAL_SERVICE_TWITTER_CALLBACK}`
+    )
+    return await this.parseResult(resp.data)
+  }
+
+  async twitterBindCallback(
+    state: string,
+    code: string
+  ): Promise<TwitterUserInfo> {
+    const resp = await this.axios.post('/api/v1/twitter/bind/callback', {
+      state,
+      code,
+    })
     return await this.parseResult(resp.data)
   }
 }

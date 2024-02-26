@@ -1,6 +1,9 @@
 import { User } from '../db/models'
 import socialSerivceHelper from './SocialSerivceHelper'
 import {
+  TwitterUserInfo,
+  UserAllData,
+  UserWalletData,
   WalletSignRequestData,
   WalletSignVerifyPayload,
 } from './SocialSerivceHelper/types'
@@ -64,10 +67,33 @@ export async function signup(
   }
 }
 
+export interface UserData {
+  wallet: Omit<UserWalletData, 'applicationId' | 'userKey'>
+  twitter: TwitterUserInfo | null
+}
+
+export async function fetchAllData(userKey: string): Promise<UserData> {
+  const data = await socialSerivceHelper.fetchAllData(userKey)
+  if (!data.wallets[0]) {
+    throw new Error('user wallet not found')
+  }
+  return {
+    wallet: {
+      type: data.wallets[0].type,
+      address: data.wallets[0].address,
+      isSignup: data.wallets[0].isSignup,
+      memo: data.wallets[0].memo,
+      extra: data.wallets[0].extra,
+    },
+    twitter: data.twitter,
+  }
+}
+
 const userServices = {
   fetchWalletSignRequest,
   login,
   signup,
+  fetchAllData,
 }
 
 export default userServices

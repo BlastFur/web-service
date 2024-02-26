@@ -4,14 +4,16 @@ import NotFoundException from '../../exceptions/NotFoundException'
 import jsonResponseMiddleware, {
   JsonResponse,
 } from '../../middleware/jsonResponse.middleware'
-import userServices from '../../services/user.service'
+import userServices, { UserData } from '../../services/user.service'
 import {
+  UserAllData,
   WalletSignRequestData,
   WalletSignRequestPayload,
   WalletSignVerifyPayload,
   WalletSignVerifyResult,
 } from '../../services/SocialSerivceHelper/types'
 import { generateJWTToken } from '../../services/utils'
+import jwtMiddleware, { JWTRequest } from '../../middleware/jwt.middleware'
 
 export default class UserController implements Controller {
   public path = '/api/v1/user'
@@ -36,6 +38,12 @@ export default class UserController implements Controller {
       '/login',
       jsonResponseMiddleware,
       this.login as RequestHandler
+    )
+    this.router.get(
+      '/my_info',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.myInfo as RequestHandler
     )
     // this.router.get(
     //   '/:userKey/wallets',
@@ -99,31 +107,25 @@ export default class UserController implements Controller {
         response.jsonSuccess({ token }, token)
       })
       .catch((error) => {
-        response.status(500).jsonError(error.message, 1001)
+        response.status(500).jsonError(error.message, 1002)
       })
   }
 
-  // private allData(
-  //   request: Request<{ userKey: string }>,
-  //   response: JsonResponse<UserAllData>,
-  //   next: NextFunction
-  // ): void {
-  //   const { userKey } = request.params
-  //   const { authApplication } = request as unknown as ApplicationRequest
-  //   Promise.all([
-  //     walletService.getUserWallets(authApplication.id, userKey),
-  //     twitterServices.getUserTwitterInfo(authApplication.id, userKey),
-  //   ])
-  //     .then(([wallets, twitter]) => {
-  //       response.jsonSuccess({
-  //         wallets: wallets.map((wallet) => wallet.getData()),
-  //         twitter,
-  //       })
-  //     })
-  //     .catch((error) => {
-  //       response.status(500).jsonError(error.message, 3000)
-  //     })
-  // }
+  private myInfo(
+    request: Request<{ address: string }>,
+    response: JsonResponse<UserData>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    userServices
+      .fetchAllData(authUser.id)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1003)
+      })
+  }
 
   // private wallets(
   //   request: Request<{ userKey: string }>,

@@ -40,10 +40,22 @@ export interface UpsertUserWalletPayload {
 }
 
 export interface UserWalletData {
+  applicationId: number
   userKey: string
   type: UserWalletType
   address: string
   isSignup: boolean
   memo: string | null
   extra: any | null
+}
+
+export interface TwitterUserInfo {
+  id: string
+  name: string
+  username: string
+}
+
+export interface UserAllData {
+  wallets: UserWalletData[]
+  twitter: TwitterUserInfo | null
 }

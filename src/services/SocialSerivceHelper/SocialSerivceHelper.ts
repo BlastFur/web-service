@@ -6,6 +6,7 @@ import {
 } from '../../constants'
 import {
   UpsertUserWalletPayload,
+  UserAllData,
   UserWalletData,
   WalletSignRequestData,
   WalletSignRequestPayload,
@@ -80,6 +81,12 @@ export default class SocialSerivceHelper {
     if (resp.data.applicationId) {
       delete resp.data.applicationId
     }
+    return await this.parseResult(resp.data)
+  }
+
+  // users
+  async fetchAllData(userKey: string): Promise<UserAllData> {
+    const resp = await this.axios.get(`/api/v1/user/${userKey}`)
     return await this.parseResult(resp.data)
   }
 }

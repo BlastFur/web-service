@@ -5,3 +5,5 @@ export const DB_NAME = process.env.DB_NAME
 export const DB_USER = process.env.DB_USER
 export const DB_PASS = process.env.DB_PASS
 export const SOCIAL_SERVICE = process.env.SOCIAL_SERVICE!
+export const SOCIAL_SERVICE_APIKEY = process.env.SOCIAL_SERVICE_APIKEY!
+export const SOCIAL_SERVICE_WALLET_CHAIN_ID = parseInt(process.env.SOCIAL_SERVICE_WALLET_CHAIN_ID!)

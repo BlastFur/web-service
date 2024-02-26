@@ -2,6 +2,7 @@ import APP from '.'
 import Decimal from 'decimal.js-light'
 import {
   PingpongController,
+  UserController,
 } from './controllers'
 import { PORT } from './constants'
 
@@ -11,6 +12,7 @@ const app = new APP({
   port: PORT ? parseInt(PORT) : undefined,
   controllers: [
     new PingpongController(),
+    new UserController(),
   ],
 })
 

@@ -54,27 +54,11 @@ const jwtMiddleware = (
             response.status(401).end('Access token user not exsit')
             return
           }
-          // vip check
-          if (useOptions.needVip) {
-            if (!user.isVip()) {
-              response.status(401).end('Access token need vip')
-              return
-            }
-          }
-
-          // admin check
-          if (useOptions.needAdmin) {
-            if (!user.isAdmin) {
-              response.status(401).end('Access token need admin')
-              return
-            }
-          }
           // eslint-disable-next-line @typescript-eslint/no-extra-semi
           ;(request as JWTRequest).jwtData = decoded
           ;(request as JWTRequest).authUser = user
           ;(request as JWTRequest).tobotoToken = token
 
-          user.updateUserSacteTokenInfo(token).catch((e) => console.log(e))
           next()
         })
         .catch(() => {
@@ -120,7 +104,6 @@ const jwtAllowNullMiddleware = (
         ;(request as JWTRequest).authUser = user
         ;(request as JWTRequest).tobotoToken = token
 
-        user.updateUserSacteTokenInfo(token).catch((e) => console.log(e))
         next()
       })
       .catch(() => {

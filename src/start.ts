@@ -3,6 +3,7 @@ import Decimal from 'decimal.js-light'
 import {
   PingpongController,
   UserController,
+  OtherController,
 } from './controllers'
 import { PORT } from './constants'
 
@@ -13,6 +14,7 @@ const app = new APP({
   controllers: [
     new PingpongController(),
     new UserController(),
+    new OtherController(),
   ],
 })
 

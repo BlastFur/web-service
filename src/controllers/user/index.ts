@@ -153,7 +153,7 @@ export default class UserController implements Controller {
   ): void {
     const { authUser } = request as unknown as JWTRequest
     userServices
-      .fetchAllData(authUser.id)
+      .fetchAllData(authUser)
       .then((data) => {
         response.jsonSuccess(data)
       })

@@ -73,13 +73,17 @@ export async function signup(
 export interface UserData {
   wallet: Omit<UserWalletData, 'applicationId' | 'userKey'>
   twitter: TwitterUserInfo | null
+  twitterTaskRecord: TwitterTaskRecordData
 }
 
-export async function fetchAllData(userKey: string): Promise<UserData> {
-  const data = await socialSerivceHelper.fetchAllData(userKey)
+export async function fetchAllData(user: User): Promise<UserData> {
+  const data = await socialSerivceHelper.fetchAllData(
+    (user.id as number).toString()
+  )
   if (!data.wallets[0]) {
     throw new Error('user wallet not found')
   }
+  const twitterTaskRecord = await TwitterTaskRecord.findOrCreateTaskRecord(user)
   return {
     wallet: {
       type: data.wallets[0].type,
@@ -89,6 +93,7 @@ export async function fetchAllData(userKey: string): Promise<UserData> {
       extra: data.wallets[0].extra,
     },
     twitter: data.twitter,
+    twitterTaskRecord: twitterTaskRecord.getData(),
   }
 }
 

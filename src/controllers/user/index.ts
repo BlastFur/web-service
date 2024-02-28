@@ -4,7 +4,10 @@ import NotFoundException from '../../exceptions/NotFoundException'
 import jsonResponseMiddleware, {
   JsonResponse,
 } from '../../middleware/jsonResponse.middleware'
-import userServices, { UserData } from '../../services/user.service'
+import userServices, {
+  SignupPayload,
+  UserData,
+} from '../../services/user.service'
 import {
   UserAllData,
   WalletSignRequestData,
@@ -115,7 +118,7 @@ export default class UserController implements Controller {
   }
 
   private signup(
-    request: Request<any, any, WalletSignVerifyPayload>,
+    request: Request<any, any, SignupPayload>,
     response: JsonResponse<{ token: string }>,
     next: NextFunction
   ): void {

@@ -12,6 +12,10 @@ import {
 } from './SocialSerivceHelper/types'
 import { GenerateJWTTokenPayload, generateJWTToken } from './utils'
 
+export type SignupPayload = WalletSignVerifyPayload & {
+  referralCode?: string
+}
+
 export async function fetchWalletSignRequest(
   address: string,
   domain: string,
@@ -42,7 +46,7 @@ export async function login(
 }
 
 export async function signup(
-  payload: WalletSignVerifyPayload
+  payload: SignupPayload
 ): Promise<GenerateJWTTokenPayload> {
   const user = await User.findByUuid(payload.request.address)
   if (user) {
@@ -53,26 +57,38 @@ export async function signup(
     // temp address
     address: `0xtemp_${new Date().getTime().toString()}`,
   })
-  const signupResult = await socialSerivceHelper.upsertUserWallet(
-    userCreated.id.toString(),
-    {
+  const userKey = userCreated.id.toString()
+  try {
+    const signupResult = await socialSerivceHelper.upsertUserWallet(userKey, {
       address: result.address,
       isSignup: true,
+    })
+    const invitation = await socialSerivceHelper.createInvitation(
+      userKey,
+      payload.referralCode
+    )
+
+    userCreated.setDataValue('address', result.address)
+    await userCreated.save()
+
+    return {
+      user: userCreated,
+      expirationTime: result.expirationTime,
     }
-  )
+  } catch (error) {
+    // clear social service data
+    const result = await socialSerivceHelper.destroyAllData(userKey)
+    await userCreated.reload()
+    await userCreated.destroy()
 
-  userCreated.setDataValue('address', signupResult.address)
-  await userCreated.save()
-
-  return {
-    user: userCreated,
-    expirationTime: result.expirationTime,
+    throw error
   }
 }
 
 export interface UserData {
   wallet: Omit<UserWalletData, 'applicationId' | 'userKey'>
   twitter: TwitterUserInfo | null
+  code: string
   twitterTaskRecord: TwitterTaskRecordData
 }
 
@@ -94,6 +110,7 @@ export async function fetchAllData(user: User): Promise<UserData> {
     },
     twitter: data.twitter,
     twitterTaskRecord: twitterTaskRecord.getData(),
+    code: data.code,
   }
 }
 

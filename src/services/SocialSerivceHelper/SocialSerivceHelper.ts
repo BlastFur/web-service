@@ -21,6 +21,7 @@ export default class SocialSerivceHelper {
   axios: AxiosInstance
 
   constructor() {
+    console.log(SOCIAL_SERVICE)
     this.axios = axios.create({
       baseURL: SOCIAL_SERVICE,
       headers: {
@@ -92,6 +93,11 @@ export default class SocialSerivceHelper {
     return await this.parseResult(resp.data)
   }
 
+  async destroyAllData(userKey: string): Promise<boolean> {
+    const resp = await this.axios.post(`/api/v1/user/${userKey}/destroy`)
+    return await this.parseResult(resp.data)
+  }
+
   // twitters
   async fetchUserTwitterAuthUrl(userKey: string): Promise<string> {
     const resp = await this.axios.get(
@@ -122,6 +128,17 @@ export default class SocialSerivceHelper {
     const resp = await this.axios.get(
       `/api/v1/twitter/check_tweet_retweet/${userKey}/${tweetId}`
     )
+    return await this.parseResult(resp.data)
+  }
+
+  // invitations
+  async createInvitation(
+    userKey: string,
+    referralCode?: string
+  ): Promise<string> {
+    const resp = await this.axios.post(`/api/v1/invitation/create/${userKey}`, {
+      referralCode,
+    })
     return await this.parseResult(resp.data)
   }
 }

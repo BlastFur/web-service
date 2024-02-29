@@ -18,6 +18,7 @@ import {
 import { generateJWTToken } from '../../services/utils'
 import jwtMiddleware, { JWTRequest } from '../../middleware/jwt.middleware'
 import { TwitterTaskRecordData } from '../../db/models/TwitterTaskRecord'
+import { DiscordTaskRecordData } from '../../db/models/DiscordTaskRecord'
 
 interface TwitterBindCallbackQuery {
   state: string
@@ -83,18 +84,18 @@ export default class UserController implements Controller {
       jsonResponseMiddleware,
       this.twitterTaskCheckRetweet as unknown as RequestHandler
     )
-    // this.router.get(
-    //   '/:userKey/wallets',
-    //   apiKeyMiddleware(),
-    //   jsonResponseMiddleware,
-    //   this.wallets as RequestHandler
-    // )
-    // this.router.get(
-    //   '/:userKey/twitter',
-    //   apiKeyMiddleware(),
-    //   jsonResponseMiddleware,
-    //   this.twitter as RequestHandler
-    // )
+    this.router.get(
+      '/twitter/task/check_follow',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.twitterTaskCheckFollow as unknown as RequestHandler
+    )
+    this.router.get(
+      '/discord/task/check_join',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.discordTaskCheckJoin as unknown as RequestHandler
+    )
   }
 
   private signRequest(
@@ -245,37 +246,35 @@ export default class UserController implements Controller {
       })
   }
 
-  // private wallets(
-  //   request: Request<{ userKey: string }>,
-  //   response: JsonResponse<UserWalletData[]>,
-  //   next: NextFunction
-  // ): void {
-  //   const { userKey } = request.params
-  //   const { authApplication } = request as unknown as ApplicationRequest
-  //   walletService
-  //     .getUserWallets(authApplication.id, userKey)
-  //     .then((data) => {
-  //       response.jsonSuccess(data.map((wallet) => wallet.getData()))
-  //     })
-  //     .catch((error) => {
-  //       response.status(500).jsonError(error.message, 3001)
-  //     })
-  // }
+  private twitterTaskCheckFollow(
+    request: Request,
+    response: JsonResponse<TwitterTaskRecordData>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    userServices
+      .userTwitterTaskCheckFollow(authUser)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1003)
+      })
+  }
 
-  // private twitter(
-  //   request: Request<{ userKey: string }>,
-  //   response: JsonResponse<TwitterUserInfo | null>,
-  //   next: NextFunction
-  // ): void {
-  //   const { userKey } = request.params
-  //   const { authApplication } = request as unknown as ApplicationRequest
-  //   twitterServices
-  //     .getUserTwitterInfo(authApplication.id, userKey)
-  //     .then((data) => {
-  //       response.jsonSuccess(data)
-  //     })
-  //     .catch((error) => {
-  //       response.status(500).jsonError(error.message, 3002)
-  //     })
-  // }
+  private discordTaskCheckJoin(
+    request: Request,
+    response: JsonResponse<DiscordTaskRecordData>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    userServices
+      .userDiscordTaskCheckJoin(authUser)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1003)
+      })
+  }
 }

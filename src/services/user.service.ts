@@ -1,4 +1,5 @@
-import { User } from '../db/models'
+import { DiscordTaskRecord, User } from '../db/models'
+import { DiscordTaskRecordData } from '../db/models/DiscordTaskRecord'
 import TwitterTaskRecord, {
   TwitterTaskRecordData,
 } from '../db/models/TwitterTaskRecord'
@@ -90,6 +91,7 @@ export interface UserData {
   twitter: TwitterUserInfo | null
   code: string
   twitterTaskRecord: TwitterTaskRecordData
+  discordTaskRecord: DiscordTaskRecordData
 }
 
 export async function fetchAllData(user: User): Promise<UserData> {
@@ -100,6 +102,7 @@ export async function fetchAllData(user: User): Promise<UserData> {
     throw new Error('user wallet not found')
   }
   const twitterTaskRecord = await TwitterTaskRecord.findOrCreateTaskRecord(user)
+  const discordTaskRecord = await DiscordTaskRecord.findOrCreateTaskRecord(user)
   return {
     wallet: {
       type: data.wallets[0].type,
@@ -110,6 +113,7 @@ export async function fetchAllData(user: User): Promise<UserData> {
     },
     twitter: data.twitter,
     twitterTaskRecord: twitterTaskRecord.getData(),
+    discordTaskRecord: discordTaskRecord.getData(),
     code: data.code,
   }
 }
@@ -168,6 +172,30 @@ export async function userTwitterTaskCheckRetweet(
   return record.getData()
 }
 
+export async function userTwitterTaskCheckFollow(
+  user: User
+): Promise<TwitterTaskRecordData> {
+  const record = await TwitterTaskRecord.findOrCreateTaskRecord(user)
+  if (record.followRecordId > 0) {
+    return record.getData()
+  }
+  record.setDataValue('followRecordId', Math.floor(new Date().getTime() / 1000))
+  await record.save()
+  return record.getData()
+}
+
+export async function userDiscordTaskCheckJoin(
+  user: User
+): Promise<DiscordTaskRecordData> {
+  const record = await DiscordTaskRecord.findOrCreateTaskRecord(user)
+  if (record.joinRecordId > 0) {
+    return record.getData()
+  }
+  record.setDataValue('joinRecordId', Math.floor(new Date().getTime() / 1000))
+  await record.save()
+  return record.getData()
+}
+
 const userServices = {
   fetchWalletSignRequest,
   login,
@@ -178,6 +206,8 @@ const userServices = {
   userTwitterTaskInfo,
   userTwitterTaskCheckLike,
   userTwitterTaskCheckRetweet,
+  userTwitterTaskCheckFollow,
+  userDiscordTaskCheckJoin,
 }
 
 export default userServices

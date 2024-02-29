@@ -13,6 +13,7 @@ import Constant from './Constant'
 export interface TwitterTaskRecordData {
   likeRecordId: number
   retweetRecordId: number
+  followRecordId: number
 }
 
 @Table({
@@ -47,6 +48,13 @@ export default class TwitterTaskRecord extends Model {
     return this.getDataValue('retweetRecordId')
   }
 
+  @AllowNull(false)
+  @Default(0)
+  @Column(DataType.INTEGER)
+  get followRecordId(): number {
+    return this.getDataValue('followRecordId')
+  }
+
   get allCleared(): boolean {
     return this.likeRecordId > 0 && this.retweetRecordId > 0
   }
@@ -74,6 +82,7 @@ export default class TwitterTaskRecord extends Model {
     return {
       likeRecordId: this.likeRecordId,
       retweetRecordId: this.retweetRecordId,
+      followRecordId: this.followRecordId,
     }
   }
 }

@@ -13,6 +13,9 @@ export type TobotoConstantName =
   | 'defaultVipExpiredAt'
   | 'fakeXVerify'
   | 'taskTweetId'
+  | 'blastfurTwitterName'
+  | 'blastfurTwitterFollowLink'
+  | 'blastfurDiscordJoinLink'
 
 export type ConstantDataValue = string | number | boolean
 
@@ -22,6 +25,9 @@ type NameMap<T> =
     // string like '[1,2,3]' for endpoint table id
     T extends 'fakeXVerify' ? boolean :
     T extends 'taskTweetId' ? string :
+    T extends 'blastfurTwitterName'? string :
+    T extends 'blastfurTwitterFollowLink'? string :
+    T extends 'blastfurDiscordJoinLink'? string :
     never;
 /* eslint-enable */
 

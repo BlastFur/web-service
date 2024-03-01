@@ -58,5 +58,10 @@ export interface TwitterUserInfo {
 export interface UserAllData {
   wallets: UserWalletData[]
   twitter: TwitterUserInfo | null
+  invitation: UserInvitationData
+}
+
+export interface UserInvitationData {
   code: string
+  invites: number
 }

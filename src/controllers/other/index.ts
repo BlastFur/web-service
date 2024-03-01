@@ -8,6 +8,9 @@ import { Constant } from '../../db/models'
 
 interface ConstantsData {
   taskTweetId: string | null
+  blastfurTwitterName: string | null
+  blastfurTwitterFollowLink: string | null
+  blastfurDiscordJoinLink: string | null
 }
 
 export default class OtherController implements Controller {
@@ -31,12 +34,27 @@ export default class OtherController implements Controller {
     response: JsonResponse<ConstantsData>,
     next: NextFunction
   ): void {
-    Promise.all([Constant.get('taskTweetId')])
-      .then(([taskTweetId]) => {
-        response.jsonSuccess({
+    Promise.all([
+      Constant.get('taskTweetId'),
+      Constant.get('blastfurTwitterName'),
+      Constant.get('blastfurTwitterFollowLink'),
+      Constant.get('blastfurDiscordJoinLink'),
+    ])
+      .then(
+        ([
           taskTweetId,
-        })
-      })
+          blastfurTwitterName,
+          blastfurTwitterFollowLink,
+          blastfurDiscordJoinLink,
+        ]) => {
+          response.jsonSuccess({
+            taskTweetId,
+            blastfurTwitterName,
+            blastfurTwitterFollowLink,
+            blastfurDiscordJoinLink,
+          })
+        }
+      )
       .catch((e) => {
         response.status(500).jsonError(e.message, 2001)
       })

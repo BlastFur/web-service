@@ -7,6 +7,7 @@ import socialSerivceHelper from './SocialSerivceHelper'
 import {
   TwitterUserInfo,
   UserAllData,
+  UserInvitationData,
   UserWalletData,
   WalletSignRequestData,
   WalletSignVerifyPayload,
@@ -89,7 +90,7 @@ export async function signup(
 export interface UserData {
   wallet: Omit<UserWalletData, 'applicationId' | 'userKey'>
   twitter: TwitterUserInfo | null
-  code: string
+  invitation: UserInvitationData
   twitterTaskRecord: TwitterTaskRecordData
   discordTaskRecord: DiscordTaskRecordData
 }
@@ -114,7 +115,7 @@ export async function fetchAllData(user: User): Promise<UserData> {
     twitter: data.twitter,
     twitterTaskRecord: twitterTaskRecord.getData(),
     discordTaskRecord: discordTaskRecord.getData(),
-    code: data.code,
+    invitation: data.invitation,
   }
 }
 

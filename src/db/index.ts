@@ -13,6 +13,8 @@ const {
   UserEvent,
   Event,
   UserEventMap,
+  Pet,
+  UserPetMap,
 } = Models
 
 const sequelize = new Sequelize({
@@ -40,6 +42,8 @@ const sequelize = new Sequelize({
     UserEvent,
     Event,
     UserEventMap,
+    Pet,
+    UserPetMap,
   ],
 })
 

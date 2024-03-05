@@ -10,7 +10,7 @@ export async function fetchUserEventData(user: User): Promise<UserEventData> {
 export async function tryInitEvent(user: User): Promise<boolean> {
   const ues = await UserEventMap.findByUserIdEventCode(user.id, 'init')
   const finished = ues.length > 0
-  if (finished) return false
+  if (finished) return true
   const twitterTaskRecord = await taskServices.fetchUserTwitterTaskRecord(user)
   const discordTaskRecord = await taskServices.fetchUserDiscordTaskRecord(user)
   if (!twitterTaskRecord.allCleared || !discordTaskRecord.allCleared) {

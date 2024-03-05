@@ -9,7 +9,6 @@ import {
   BelongsTo,
 } from 'sequelize-typescript'
 import User from './User'
-import Constant from './Constant'
 
 export interface UserEventData {
   points: number

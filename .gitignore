@@ -14,3 +14,4 @@ ref
 .vscode/*
 .prettierrc.js
 logs
+*.temp.json

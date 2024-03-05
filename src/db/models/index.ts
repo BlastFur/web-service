@@ -4,6 +4,8 @@ import User from './User'
 import TwitterTaskRecord from './TwitterTaskRecord'
 import DiscordTaskRecord from './DiscordTaskRecord'
 import UserEvent, { Event, UserEventMap } from './UserEvent'
+import Pet from './Pet'
+import UserPetMap from './UserPet'
 
 export {
   Constant,
@@ -14,4 +16,6 @@ export {
   UserEvent,
   Event,
   UserEventMap,
+  Pet,
+  UserPetMap,
 }

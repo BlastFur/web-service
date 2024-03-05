@@ -8,12 +8,11 @@ import userServices, {
   SignupPayload,
   UserData,
 } from '../../services/user.service'
+import petServices from '../../services/pet.service'
 import {
-  UserAllData,
   WalletSignRequestData,
   WalletSignRequestPayload,
   WalletSignVerifyPayload,
-  WalletSignVerifyResult,
 } from '../../services/SocialSerivceHelper/types'
 import { generateJWTToken } from '../../services/utils'
 import jwtMiddleware, { JWTRequest } from '../../middleware/jwt.middleware'
@@ -21,6 +20,7 @@ import { TwitterTaskRecordData } from '../../db/models/TwitterTaskRecord'
 import { DiscordTaskRecordData } from '../../db/models/DiscordTaskRecord'
 import otherServices from '../../services/other.service'
 import { User } from '../../db/models'
+import { UserPetData } from '../../db/models/UserPet'
 
 interface TwitterBindCallbackQuery {
   state: string
@@ -62,6 +62,12 @@ export default class UserController implements Controller {
       jwtMiddleware(),
       jsonResponseMiddleware,
       this.myInfo as RequestHandler
+    )
+    this.router.get(
+      '/my_pets',
+      jwtMiddleware(),
+      jsonResponseMiddleware,
+      this.myPets as RequestHandler
     )
     this.router.get(
       '/twitter/auth_url',
@@ -166,6 +172,22 @@ export default class UserController implements Controller {
     const { authUser } = request as unknown as JWTRequest
     userServices
       .fetchAllData(authUser)
+      .then((data) => {
+        response.jsonSuccess(data)
+      })
+      .catch((error) => {
+        response.status(500).jsonError(error.message, 1003)
+      })
+  }
+
+  private myPets(
+    request: Request,
+    response: JsonResponse<UserPetData[]>,
+    next: NextFunction
+  ): void {
+    const { authUser } = request as unknown as JWTRequest
+    petServices
+      .fetchUserPets(authUser)
       .then((data) => {
         response.jsonSuccess(data)
       })

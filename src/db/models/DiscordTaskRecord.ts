@@ -6,11 +6,13 @@ import {
   Model,
   ForeignKey,
   Default,
+  BelongsTo,
 } from 'sequelize-typescript'
 import User from './User'
 
 export interface DiscordTaskRecordData {
   joinRecordId: number
+  allCleared: boolean
 }
 
 @Table({
@@ -30,6 +32,15 @@ export default class DiscordTaskRecord extends Model {
   @Column(DataType.INTEGER)
   get joinRecordId(): number {
     return this.getDataValue('joinRecordId')
+  }
+
+  @BelongsTo(() => User)
+  get user(): User | undefined {
+    return this.getDataValue('user')
+  }
+
+  set user(user: User | undefined) {
+    //
   }
 
   get allCleared(): boolean {
@@ -53,6 +64,7 @@ export default class DiscordTaskRecord extends Model {
   getData(): DiscordTaskRecordData {
     return {
       joinRecordId: this.joinRecordId,
+      allCleared: this.allCleared,
     }
   }
 }

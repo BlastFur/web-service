@@ -19,10 +19,18 @@ import { generateJWTToken } from '../../services/utils'
 import jwtMiddleware, { JWTRequest } from '../../middleware/jwt.middleware'
 import { TwitterTaskRecordData } from '../../db/models/TwitterTaskRecord'
 import { DiscordTaskRecordData } from '../../db/models/DiscordTaskRecord'
+import otherServices from '../../services/other.service'
+import { User } from '../../db/models'
 
 interface TwitterBindCallbackQuery {
   state: string
   code: string
+}
+
+function processInitTasks(user: User): void {
+  otherServices.tryInitProcess(user).catch((e) => {
+    console.error(e)
+  })
 }
 
 export default class UserController implements Controller {
@@ -207,6 +215,7 @@ export default class UserController implements Controller {
     userServices
       .userTwitterTaskInfo(authUser)
       .then((data) => {
+        processInitTasks(authUser)
         response.jsonSuccess(data)
       })
       .catch((error) => {
@@ -223,6 +232,7 @@ export default class UserController implements Controller {
     userServices
       .userTwitterTaskCheckLike(authUser)
       .then((data) => {
+        processInitTasks(authUser)
         response.jsonSuccess(data)
       })
       .catch((error) => {
@@ -239,6 +249,7 @@ export default class UserController implements Controller {
     userServices
       .userTwitterTaskCheckRetweet(authUser)
       .then((data) => {
+        processInitTasks(authUser)
         response.jsonSuccess(data)
       })
       .catch((error) => {
@@ -255,6 +266,7 @@ export default class UserController implements Controller {
     userServices
       .userTwitterTaskCheckFollow(authUser)
       .then((data) => {
+        processInitTasks(authUser)
         response.jsonSuccess(data)
       })
       .catch((error) => {
@@ -271,6 +283,7 @@ export default class UserController implements Controller {
     userServices
       .userDiscordTaskCheckJoin(authUser)
       .then((data) => {
+        processInitTasks(authUser)
         response.jsonSuccess(data)
       })
       .catch((error) => {

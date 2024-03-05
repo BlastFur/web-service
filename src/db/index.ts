@@ -4,8 +4,16 @@ import { RPC } from '../utils/EVMHelper/dbModels'
 import { DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS } from '../constants'
 // import { promisify } from 'util'
 
-const { Constant, MonitorRunLog, User, TwitterTaskRecord, DiscordTaskRecord } =
-  Models
+const {
+  Constant,
+  MonitorRunLog,
+  User,
+  TwitterTaskRecord,
+  DiscordTaskRecord,
+  UserEvent,
+  Event,
+  UserEventMap,
+} = Models
 
 const sequelize = new Sequelize({
   host: DB_HOST,
@@ -29,6 +37,9 @@ const sequelize = new Sequelize({
     User,
     TwitterTaskRecord,
     DiscordTaskRecord,
+    UserEvent,
+    Event,
+    UserEventMap,
   ],
 })
 

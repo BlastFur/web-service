@@ -3,6 +3,7 @@ import { DiscordTaskRecordData } from '../db/models/DiscordTaskRecord'
 import TwitterTaskRecord, {
   TwitterTaskRecordData,
 } from '../db/models/TwitterTaskRecord'
+import { UserEventData } from '../db/models/UserEvent'
 import socialSerivceHelper from './SocialSerivceHelper'
 import {
   TwitterUserInfo,
@@ -12,7 +13,9 @@ import {
   WalletSignRequestData,
   WalletSignVerifyPayload,
 } from './SocialSerivceHelper/types'
-import { GenerateJWTTokenPayload, generateJWTToken } from './utils'
+import eventServices from './event.service'
+import taskServices from './task.service'
+import { GenerateJWTTokenPayload } from './utils'
 
 export type SignupPayload = WalletSignVerifyPayload & {
   referralCode?: string
@@ -93,6 +96,7 @@ export interface UserData {
   invitation: UserInvitationData
   twitterTaskRecord: TwitterTaskRecordData
   discordTaskRecord: DiscordTaskRecordData
+  events: UserEventData
 }
 
 export async function fetchAllData(user: User): Promise<UserData> {
@@ -102,8 +106,9 @@ export async function fetchAllData(user: User): Promise<UserData> {
   if (!data.wallets[0]) {
     throw new Error('user wallet not found')
   }
-  const twitterTaskRecord = await TwitterTaskRecord.findOrCreateTaskRecord(user)
-  const discordTaskRecord = await DiscordTaskRecord.findOrCreateTaskRecord(user)
+  const twitterTaskRecord = await taskServices.fetchUserTwitterTaskRecord(user)
+  const discordTaskRecord = await taskServices.fetchUserDiscordTaskRecord(user)
+  const events = await eventServices.fetchUserEventData(user)
   return {
     wallet: {
       type: data.wallets[0].type,
@@ -113,9 +118,10 @@ export async function fetchAllData(user: User): Promise<UserData> {
       extra: data.wallets[0].extra,
     },
     twitter: data.twitter,
-    twitterTaskRecord: twitterTaskRecord.getData(),
-    discordTaskRecord: discordTaskRecord.getData(),
+    twitterTaskRecord,
+    discordTaskRecord,
     invitation: data.invitation,
+    events,
   }
 }
 

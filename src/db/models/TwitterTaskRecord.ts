@@ -6,6 +6,7 @@ import {
   Model,
   ForeignKey,
   Default,
+  BelongsTo,
 } from 'sequelize-typescript'
 import User from './User'
 import Constant from './Constant'
@@ -14,6 +15,7 @@ export interface TwitterTaskRecordData {
   likeRecordId: number
   retweetRecordId: number
   followRecordId: number
+  allCleared: boolean
 }
 
 @Table({
@@ -55,6 +57,15 @@ export default class TwitterTaskRecord extends Model {
     return this.getDataValue('followRecordId')
   }
 
+  @BelongsTo(() => User)
+  get user(): User | undefined {
+    return this.getDataValue('user')
+  }
+
+  set user(user: User | undefined) {
+    //
+  }
+
   get allCleared(): boolean {
     return this.likeRecordId > 0 && this.retweetRecordId > 0
   }
@@ -83,6 +94,7 @@ export default class TwitterTaskRecord extends Model {
       likeRecordId: this.likeRecordId,
       retweetRecordId: this.retweetRecordId,
       followRecordId: this.followRecordId,
+      allCleared: this.allCleared,
     }
   }
 }

@@ -11,6 +11,7 @@ interface ConstantsData {
   blastfurTwitterName: string | null
   blastfurTwitterFollowLink: string | null
   blastfurDiscordJoinLink: string | null
+  initialPoints: number | null
 }
 
 export default class OtherController implements Controller {
@@ -39,6 +40,7 @@ export default class OtherController implements Controller {
       Constant.get('blastfurTwitterName'),
       Constant.get('blastfurTwitterFollowLink'),
       Constant.get('blastfurDiscordJoinLink'),
+      Constant.get('initialPoints'),
     ])
       .then(
         ([
@@ -46,12 +48,14 @@ export default class OtherController implements Controller {
           blastfurTwitterName,
           blastfurTwitterFollowLink,
           blastfurDiscordJoinLink,
+          initialPoints,
         ]) => {
           response.jsonSuccess({
             taskTweetId,
             blastfurTwitterName,
             blastfurTwitterFollowLink,
             blastfurDiscordJoinLink,
+            initialPoints,
           })
         }
       )

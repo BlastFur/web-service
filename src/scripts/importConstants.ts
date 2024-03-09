@@ -9,6 +9,7 @@ const constants: Array<[string, string | number]> = [
     'https://twitter.com/intent/follow?region=follow_link&screen_name=BlastFur',
   ],
   ['blastfurDiscordJoinLink', 'https://discord.com/invite/ZYMzybZQ'],
+  ['initialPoints', 50],
 ]
 
 async function tasks(): Promise<void> {

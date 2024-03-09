@@ -16,6 +16,7 @@ export type TobotoConstantName =
   | 'blastfurTwitterName'
   | 'blastfurTwitterFollowLink'
   | 'blastfurDiscordJoinLink'
+  | 'initialPoints'
 
 export type ConstantDataValue = string | number | boolean
 
@@ -28,6 +29,7 @@ type NameMap<T> =
     T extends 'blastfurTwitterName'? string :
     T extends 'blastfurTwitterFollowLink'? string :
     T extends 'blastfurDiscordJoinLink'? string :
+    T extends 'initialPoints'? number :
     never;
 /* eslint-enable */
 
